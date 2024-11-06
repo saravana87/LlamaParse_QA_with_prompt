@@ -1,2 +1,4 @@
 # LlamaParse_QA_with_prompt
-LlamaParse technique to craete index and simple question and answer
+LlamaParse technique to create index and simple question and answer
+
+
