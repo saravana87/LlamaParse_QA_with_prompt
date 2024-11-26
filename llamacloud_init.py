@@ -13,12 +13,13 @@ with open("config.yaml", "r") as f:
 
 # API access
 llama_cloud_API_KEY = config["llama_cloud_api_key"]
+#print(config)
 os.environ["OPENAI_API_KEY"] = config["openai_api_key"]
-
+openai_api_key = config["openai_api_key"]
 # Use dynamic model selection from config
 embed_model = OpenAIEmbedding(model=config["openai_embedding_model"])
 llm = OpenAI(model=config["openai_llm_model"])
 
 Settings.llm = llm
 Settings.embed_model = embed_model
-__all__ = ["embed_model", "llm", "Settings","llama_cloud_API_KEY"]
+__all__ = ["embed_model", "llm", "Settings","llama_cloud_API_KEY","openai_api_key"]
