@@ -11,9 +11,11 @@ load_dotenv()
 
 # Set up API keys
 os.environ["OPENAI_API_KEY"] = openai_api_key
-print(os.environ["OPENAI_API_KEY"])
+print("API Key Loaded:", os.environ["OPENAI_API_KEY"])
 
+# Initialize the OpenAI LLM
 llm = OpenAI(model="gpt-3.5-turbo", api_key=openai_api_key)
+
 # Initialize the prompt template
 template = (
     "We have provided context information below. \n"
@@ -30,24 +32,35 @@ index = load_index_from_storage(storage_context, index_id="aws01")
 query_request = index.as_query_engine(text_qa_template=qa_template)
 
 # Streamlit interface
-st.title("AWS Helper")
+st.set_page_config(page_title="AWS Helper", page_icon="🤖", layout="wide")
+st.title("🤖 AWS Helper")
+st.subheader("Get instant insights from AWS documentation")
 
 # Input for user question
-query_str = st.text_input("Enter your question about AWS:")
+query_str = st.text_input("💡 Enter your question about AWS:", placeholder="e.g., What is the latest with AWS?")
 
 # Button to submit the question
 if st.button("Get Answer"):
     if query_str:
-        response = query_request.query(query_str)
-        
-        # Display the response with structured formatting
-        st.markdown("**Answer:**")
-        
-        with st.expander("Click to view the full answer", expanded=True):
-            st.write(response)  # Basic display, can also be `st.markdown(response)` if markdown is needed
+        with st.spinner("Fetching the answer..."):
+            response = query_request.query(query_str)
 
-            # Optionally, display in a code block or text area for better readability
-            st.code(response, language="markdown")  # Use language="text" if markdown rendering isn't needed
+        # Enhanced display of the response
+        st.success("Here is your answer:")
+        st.markdown("### **Answer:**")
+        st.markdown(f"📝 {response}", unsafe_allow_html=True)
+
+        # Additional UI options for better user experience
+        with st.expander("🔍 View Full Answer"):
+            st.text_area("Full Answer", value=str(response), height=200)
+
+        # Download button for the response
+        st.download_button(
+            label="📥 Download Answer",
+            data=str(response),
+            file_name="aws_answer.txt",
+            mime="text/plain",
+        )
 
     else:
-        st.warning("Please enter a question.")
+        st.warning("❗ Please enter a question.")
